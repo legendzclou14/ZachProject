@@ -8,6 +8,7 @@ using TMPro;
 public class GameSceneManager : MonoBehaviour
 {
     [SerializeField] private VideoPlayer _player;
+    [SerializeField] private GuessPopup _guessPopup;
     [SerializeField] private Button _attackButton;
     [SerializeField] private Button _thinkButton;
     [SerializeField] private TextMeshProUGUI _gameText;
@@ -15,6 +16,7 @@ public class GameSceneManager : MonoBehaviour
     [SerializeField] private string[] _wordsToGuess;
     [SerializeField] private int[] _lettersAtStart;
     private int _currentWordIndex = 0;
+    private string _currentWordWithCoveredChars;
     private List<int> _uncoveredLetters = new List<int>();
 
     private void Awake() 
@@ -22,6 +24,22 @@ public class GameSceneManager : MonoBehaviour
         _player.gameObject.SetActive(true);
         _player.loopPointReached += OnIntroEnd;
         _player.Play();
+        _guessPopup.OnAttackConfirmed += CheckAnswer;
+    }
+
+    private void CheckAnswer(string answer)
+    {
+        if (answer.ToLower() == _wordsToGuess[_currentWordIndex].ToLower())
+        {
+            Debug.Log("good answer!");
+            NextWord();
+        }
+        else
+        {
+            Debug.Log("Bad answer dumbfuck");
+        }
+
+        BackToActionMenu();
     }
 
     private void OnIntroEnd(VideoPlayer vp)
@@ -35,6 +53,7 @@ public class GameSceneManager : MonoBehaviour
     {
         PrepareWord(_currentWordIndex);
         _thinkButton.onClick.AddListener(OnThinkClick);
+        _attackButton.onClick.AddListener(OnAttackClick);
         BackToActionMenu();
     }
 
@@ -47,9 +66,8 @@ public class GameSceneManager : MonoBehaviour
     
     private void OnAttackClick()
     {
-        UncoverLetters(_thinkUncoveredLetters);
-        //vv THIS GOES AFTER ANIM vv
-        BackToActionMenu();
+        _guessPopup.gameObject.SetActive(true);
+        _guessPopup.Setup(_currentWordWithCoveredChars);
     }
 
     private void BackToActionMenu()
@@ -91,6 +109,8 @@ public class GameSceneManager : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
             i++;
         }
+
+        _currentWordWithCoveredChars = _gameText.text;
     }
 
     //Play after good guy attack anim
@@ -121,4 +141,6 @@ public class GameSceneManager : MonoBehaviour
             }
         }
     }
+
+
 }
