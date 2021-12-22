@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Video;
 using UnityEngine.UI;
 using TMPro;
@@ -12,9 +13,12 @@ public class GameSceneManager : MonoBehaviour
     [SerializeField] private Button _attackButton;
     [SerializeField] private Button _thinkButton;
     [SerializeField] private TextMeshProUGUI _gameText;
+    [SerializeField] private HealthManager _healthManager;
     [SerializeField] private int _thinkUncoveredLetters;
     [SerializeField] private string[] _wordsToGuess;
     [SerializeField] private int[] _lettersAtStart;
+    [SerializeField] private VideoClip _goodEnding;
+    [SerializeField] private VideoClip _badEnding;
     private int _currentWordIndex = 0;
     private string _currentWordWithCoveredChars;
     private List<int> _uncoveredLetters = new List<int>();
@@ -25,6 +29,9 @@ public class GameSceneManager : MonoBehaviour
         _player.loopPointReached += OnIntroEnd;
         _player.Play();
         _guessPopup.OnAttackConfirmed += CheckAnswer;
+
+        _healthManager.OnGoodGuyKilled += OnGoodGuyKilled;
+        _healthManager.OnBadGuyHit += OnBadGuyHit;
     }
 
     private void CheckAnswer(string answer)
@@ -32,14 +39,55 @@ public class GameSceneManager : MonoBehaviour
         if (answer.ToLower() == _wordsToGuess[_currentWordIndex].ToLower())
         {
             Debug.Log("good answer!");
-            NextWord();
+            _healthManager.AttackBadGuy();
         }
         else
         {
+            _healthManager.AttackGoodGuy();
             Debug.Log("Bad answer dumbfuck");
         }
 
         BackToActionMenu();
+    }
+
+    private void OnGoodGuyKilled()
+    {
+        Debug.Log("Good guy is dead Sadge :(");
+        _player.clip = _badEnding;
+        _player.gameObject.SetActive(true);
+        _player.Play();
+    }
+    
+    private void OnBadGuyHit(int hit)
+    {
+        switch (hit)
+        {
+            case 0:
+                Debug.Log("First hit!");
+                NextWord();
+                break;
+            case 1:
+                Debug.Log("Second hit!");
+                NextWord();
+                break;
+            case 2:
+                Debug.Log("Third hit!");
+                NextWord();
+                break;
+            case 3:
+                Debug.Log("Fourth hit!");
+                NextWord();
+                break;
+            case 4:
+                Debug.Log("Fifth and final hit!");
+                _player.clip = _goodEnding;
+                _player.gameObject.SetActive(true);
+                _player.Play();
+                break;
+            default:
+                break;
+        }
+        
     }
 
     private void OnIntroEnd(VideoPlayer vp)
@@ -60,6 +108,7 @@ public class GameSceneManager : MonoBehaviour
     private void OnThinkClick()
     {
         UncoverLetters(_thinkUncoveredLetters);
+        _healthManager.AttackGoodGuy();
         //vv THIS GOES AFTER ANIM vv
         BackToActionMenu();
     }
@@ -141,6 +190,4 @@ public class GameSceneManager : MonoBehaviour
             }
         }
     }
-
-
 }

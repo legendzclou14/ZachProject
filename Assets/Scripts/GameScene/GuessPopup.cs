@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class GuessPopup : MonoBehaviour
@@ -20,6 +21,17 @@ public class GuessPopup : MonoBehaviour
         _guessField.onValueChanged.AddListener(MakeAttackButtonInteractible);
     }
 
+    private void Update() 
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            if (!string.IsNullOrEmpty(_guessField.text))
+            {
+                OnAttackClick();
+            }
+        }
+    }
+
     private void MakeAttackButtonInteractible(string text)
     {
         _attackButton.interactable = text.Length > 0;
@@ -29,6 +41,8 @@ public class GuessPopup : MonoBehaviour
     {
         _guessField.text = string.Empty;
         _wordToGuessText.text = word;
+        
+        EventSystem.current.SetSelectedGameObject(_guessField.gameObject);
         StartCoroutine(BadGuyDialogue(_badGuyDialogueBank[UnityEngine.Random.Range(0, _badGuyDialogueBank.Length)]));
     }
 
