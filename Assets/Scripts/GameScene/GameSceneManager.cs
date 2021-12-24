@@ -118,6 +118,8 @@ public class GameSceneManager : MonoBehaviour
                 break;
             case 4:
                 Debug.Log("Fifth and final hit!");
+                _audioManager.StopMusic();
+                _badGuy.StayHurt();
                 _player.clip = _goodEnding;
                 _player.gameObject.SetActive(true);
                 _player.loopPointReached += (x) => SceneManager.LoadScene("MainMenuScene");
