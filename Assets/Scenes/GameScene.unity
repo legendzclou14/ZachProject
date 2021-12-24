@@ -933,7 +933,7 @@ MonoBehaviour:
   - BOISSONS CHAUDES
   - "ACTIVIT\xC9S"
   _lettersAtStart: 0200000002000000020000000300000002000000
-  _goodEnding: {fileID: 32900000, guid: f74d71977e959ec4f8e3c7e7da1cac6d, type: 3}
+  _goodEnding: {fileID: 32900000, guid: 2c5738069b7cbf94a9c7496f8f36fcef, type: 3}
   _badEnding: {fileID: 32900000, guid: cf36c2414a971c9489a9f50024286c4f, type: 3}
   _goodGuy: {fileID: 1690251534}
   _badGuy: {fileID: 549866837}
