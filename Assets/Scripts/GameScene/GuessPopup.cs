@@ -13,6 +13,7 @@ public class GuessPopup : MonoBehaviour
     [SerializeField] private TMP_InputField _guessField;
     [SerializeField] private Button _attackButton;
     [SerializeField] private string[] _badGuyDialogueBank;
+    [SerializeField] private AudioSource _voice;
     public event Action<string> OnAttackConfirmed;
 
     private void Awake() 
@@ -50,15 +51,18 @@ public class GuessPopup : MonoBehaviour
     {
         _badGuyDialogueText.text = string.Empty;
 
+        _voice.Play();
         foreach (char i in text)
         {
             _badGuyDialogueText.text += i;
             yield return new WaitForSeconds(0.05f);
         }
+        _voice.Stop();
     }
 
     private void OnAttackClick()
     {
+        _voice.Stop();
         OnAttackConfirmed?.Invoke(_guessField.text);
         this.gameObject.SetActive(false);
     }
